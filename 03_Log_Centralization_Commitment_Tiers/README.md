@@ -4,7 +4,7 @@
 
 **Use this script first** to check if your workspaces meet the minimum 100GB/day ingestion requirement for dedicated clusters. Tracks total Log Analytics workspace ingestion across your environment for the last 30 days, helping you understand data volumes per region before considering dedicated cluster deployment.
 
-> **⚠️ Important**: Dedicated clusters require a minimum commitment of 100GB/day. Only proceed with cluster creation if your regional ingestion meets this threshold.
+> **Important**: Dedicated clusters require a minimum commitment of 100GB/day. Only proceed with cluster creation if your regional ingestion meets this threshold.
 
 ### Prerequisites
 
