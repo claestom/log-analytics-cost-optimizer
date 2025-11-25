@@ -22,25 +22,15 @@ git clone https://github.com/claestom/lawcostoptseries.git
 cd lawcostoptseries/03_Log_Centralization_Commitment_Tiers/scripts
 ```
 
-#### Analyze all subscriptions in your tenant
+**Specify the region parameter** as dedicated clusters are region-specific and can only link workspaces within the same Azure region:
+
 ```powershell
-.\Get-WorkspaceIngestion.ps1
+.\Get-WorkspaceIngestion.ps1 -Region "eastus" [-SubscriptionsFile "subs.json"] [-IncludeZero]
 ```
 
-#### Analyze specific subscriptions using a JSON file
-```powershell
-.\Get-WorkspaceIngestion.ps1 -SubscriptionsFile "subs.json"
-```
-
-#### Filter by specific region
-```powershell
-.\Get-WorkspaceIngestion.ps1 -Region "eastus"
-```
-
-#### Include workspaces with zero ingestion
-```powershell
-.\Get-WorkspaceIngestion.ps1 -IncludeZero
-```
+**Optional parameters:**
+- `-SubscriptionsFile`: Analyze only specific subscriptions (see format below)
+- `-IncludeZero`: Include workspaces with zero data ingestion in results
 
 ### Parameters
 
