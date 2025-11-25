@@ -17,6 +17,11 @@
 
 ### Usage
 
+```powershell
+git clone https://github.com/claestom/lawcostoptseries.git
+cd lawcostoptseries/03_Log_Centralization_Commitment_Tiers/scripts
+```
+
 #### Analyze all subscriptions in your tenant
 ```powershell
 .\Get-WorkspaceIngestion.ps1
