@@ -69,6 +69,12 @@ The script displays a table showing:
 
 ![Script Output Example](screenshots/workspace-ingestion-output.png)
 
+### Expected Warnings
+
+**Note**: The script may display authentication warnings caused by the `Get-AzSubscription` cmdlet when attempting to enumerate subscriptions. This is normal behavior when:
+
+These warnings don't affect the script's functionality and can be safely ignored. The script will continue processing accessible tenants, subscriptions and workspaces.
+
 ### Use Case
 
 This script is particularly valuable for:
