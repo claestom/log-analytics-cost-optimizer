@@ -87,3 +87,4 @@ if ($results) {
 
 Write-Output "---"
 Write-Output "Total: $total GB (Last 30 days)"
+Write-Output "Average per day: $([math]::Round($total / 30, 2)) GB/day"
