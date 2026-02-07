@@ -40,6 +40,16 @@ Implement your transformations through [Data Collection Rules (DCRs)](https://le
 
 After deploying your DCRs, return to [Log Analytics Workspace Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-insights-overview#usage-tab) to track the impact of your transformations. Monitor the Usage tab to verify ingestion reduction by table and calculate your cost savings over time.
 
+## Real-World Example: Azure Firewall Selective Logging
+
+One powerful example of data ingestion control is [optimizing Azure Firewall logs with selective logging](https://techcommunity.microsoft.com/blog/azurenetworksecurityblog/optimize-azure-firewall-logs-with-selective-logging/4438242). Azure Firewall can generate substantial log volumes, especially in environments with high network traffic. By using ingestion-time transformations, organizations can:
+
+- **Filter out low-priority alerts**: Exclude IDPS signatures with low severity (e.g., `where Action !contains "alert" and Severity != 3`) to focus on actionable threats
+- **Remove trusted network traffic**: Filter out logs from specific IP ranges like test or trusted networks (e.g., `where not(SourceIp startswith "10.0.200.")`) to eliminate unnecessary noise
+- **Reduce column storage**: Use `project` statements to keep only the columns needed for security analysis
+
+This approach can significantly reduce ingestion costs while maintaining the critical security telemetry needed for threat detection, compliance, and incident response. The same principles apply to other high-volume data sources in your workspace.
+
 ## Navigation
 
 - [← Part 3: Log Centralization & Commitment Tiers](../03_Log_Centralization_Commitment_Tiers/)
