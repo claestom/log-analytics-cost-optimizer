@@ -228,6 +228,15 @@ if ($avgAnalyticsPerDay -ge 100) {
     }
     
     Write-Host "Recommended Commitment Tier: $($recommendedTier.Capacity) GB/day" -ForegroundColor Cyan
+    Write-Host "  Monthly Cost: `$$($recommendedTier.MonthlyCost)" -ForegroundColor White
+} else {
+    Write-Host "RECOMMENDATION: Use Pay-As-You-Go (PAYG) pricing" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "Your average Analytics log ingestion: $avgAnalyticsPerDay GB/day" -ForegroundColor White
+    Write-Host ""
+    Write-Host "Dedicated clusters require a minimum commitment tier of 100 GB/day." -ForegroundColor Gray
+    Write-Host "Your current Analytics log volume does not meet this threshold." -ForegroundColor Gray
+    Write-Host "Pay-As-You-Go pricing is the most cost-effective option for your workload." -ForegroundColor Gray
 }
 
 Write-Host ""
