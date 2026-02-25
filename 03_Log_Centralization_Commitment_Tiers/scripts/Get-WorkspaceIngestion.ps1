@@ -211,70 +211,24 @@ if ($avgAnalyticsPerDay -ge 100) {
     Write-Host "Your average Analytics log ingestion: $avgAnalyticsPerDay GB/day" -ForegroundColor White
     Write-Host ""
     
-    # Find appropriate tier
+    # Find appropriate tier - select the highest tier that is at or below current ingestion
+    # This ensures we recommend the lower tier when volume is between two tiers
     $recommendedTier = $null
     foreach ($tier in $commitmentTiers) {
-        if ($avgAnalyticsPerDay -le $tier.Capacity) {
+        if ($tier.Capacity -le $avgAnalyticsPerDay) {
             $recommendedTier = $tier
+        } else {
             break
         }
     }
     
+    # If still null, use the minimum tier (100 GB/day)
     if (-not $recommendedTier) {
-        $recommendedTier = $commitmentTiers[-1] # Largest tier
+        $recommendedTier = $commitmentTiers[0]
     }
-    
-    # Calculate pay-as-you-go cost for comparison (assuming $2.30/GB for Analytics logs)
-    $payAsYouGoCost = [math]::Round($avgAnalyticsPerDay * 2.30 * 30, 2)
-    $commitmentMonthlyCost = $recommendedTier.MonthlyCost
-    $savings = [math]::Round($payAsYouGoCost - $commitmentMonthlyCost, 2)
-    $savingsPercent = [math]::Round(($savings / $payAsYouGoCost) * 100, 2)
     
     Write-Host "Recommended Commitment Tier: $($recommendedTier.Capacity) GB/day" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "Cost Comparison (Monthly):" -ForegroundColor White
-    Write-Host "  Pay-as-you-go (estimated):     `$$payAsYouGoCost" -ForegroundColor Gray
-    Write-Host "  Commitment Tier:               `$$commitmentMonthlyCost" -ForegroundColor Gray
-    if ($savings -gt 0) {
-        Write-Host "  Monthly Savings:               `$$savings ($savingsPercent%)" -ForegroundColor Green
-    } else {
-        Write-Host "  Monthly Additional Cost:       `$$([math]::Abs($savings))" -ForegroundColor Red
-    }
-    Write-Host ""
-    Write-Host "Benefits of Dedicated Cluster:" -ForegroundColor White
-    Write-Host "  • Centralized log management across multiple workspaces" -ForegroundColor Gray
-    Write-Host "  • Cross-workspace queries without additional cost" -ForegroundColor Gray
-    Write-Host "  • Customer-managed keys (CMK) for encryption" -ForegroundColor Gray
-    Write-Host "  • Availability Zones support" -ForegroundColor Gray
-    Write-Host "  • Commitment tier pricing for predictable costs" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "Next Steps:" -ForegroundColor White
-    Write-Host "  1. Review the workspace list to determine which should be linked to the cluster" -ForegroundColor Gray
-    Write-Host "  2. Create a dedicated cluster in your preferred region" -ForegroundColor Gray
-    Write-Host "  3. Link workspaces to the cluster to benefit from centralized billing" -ForegroundColor Gray
-    Write-Host "  4. Monitor ingestion patterns and adjust commitment tier as needed" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "Documentation: https://azure.microsoft.com/en-us/pricing/details/monitor/" -ForegroundColor DarkCyan
-    
-} elseif ($avgAnalyticsPerDay -ge 50) {
-    Write-Host "NOTE: You're approaching commitment tier threshold" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "Current Analytics ingestion: $avgAnalyticsPerDay GB/day" -ForegroundColor White
-    Write-Host "Commitment tiers start at 100 GB/day" -ForegroundColor White
-    Write-Host ""
-    Write-Host "Consider monitoring your ingestion growth. A dedicated cluster becomes" -ForegroundColor Gray
-    Write-Host "cost-effective at ~100 GB/day of Analytics logs." -ForegroundColor Gray
-} else {
-    Write-Host "Current Analytics ingestion: $avgAnalyticsPerDay GB/day" -ForegroundColor White
-    Write-Host ""
-    Write-Host "Your ingestion volume is below commitment tier thresholds." -ForegroundColor Gray
-    Write-Host "Pay-as-you-go pricing is likely more cost-effective for your workload." -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "Commitment tiers start at 100 GB/day and are beneficial for:" -ForegroundColor Gray
-    Write-Host "  • High-volume analytics log ingestion" -ForegroundColor Gray
-    Write-Host "  • Multiple workspaces that need centralized management" -ForegroundColor Gray
-    Write-Host "  • Requirements for customer-managed keys or availability zones" -ForegroundColor Gray
-}
+    Write-Host "  Monthly Cost: `$$($recommendedTier.MonthlyCost)" -ForegroundColor White
 
 Write-Host ""
 Write-Host "===============================================" -ForegroundColor Cyan
