@@ -2,9 +2,11 @@
 
 ## PowerShell Script: Get-WorkspaceIngestion.ps1
 
-**Use this script first** to check if your workspaces meet the minimum 100GB/day ingestion requirement for dedicated clusters. Tracks total Log Analytics workspace ingestion across your environment for the last 30 days, helping you understand data volumes per region before considering dedicated cluster deployment.
+**Use this script first** to check if your workspaces meet the minimum 100GB/day ingestion requirement for dedicated clusters. Tracks total Log Analytics workspace ingestion across your environment for the last 30 days, **split by log classification** (Analytics, Basic, and Auxiliary), helping you understand data volumes per region before considering dedicated cluster deployment.
 
 > **Important**: Dedicated clusters require a minimum commitment of 100GB/day. Only proceed with cluster creation if your regional ingestion meets this threshold.
+
+> **Log Classifications**: The script automatically categorizes ingestion by table plan type (Analytics, Basic, Auxiliary) as defined in [Part 2: Log Classifications](../02_Log_Classifications/README.md). This breakdown helps you understand which log types contribute to your commitment tier calculations.
 
 ### Prerequisites
 
@@ -25,18 +27,20 @@ cd lawcostoptseries/03_Log_Centralization_Commitment_Tiers/scripts
 **Specify the region parameter** as dedicated clusters are region-specific and can only link workspaces within the same Azure region:
 
 ```powershell
-.\Get-WorkspaceIngestion.ps1 -Region "eastus" [-SubscriptionsFile "subs.json"] [-IncludeZero]
+.\Get-WorkspaceIngestion.ps1 -Region "eastus" [-SubscriptionsFile "subs.json"] [-IncludeZero] [-TenantId "tenant-id"]
 ```
 
 **Optional parameters:**
 - `-SubscriptionsFile`: Analyze only specific subscriptions (see format below)
 - `-IncludeZero`: Include workspaces with zero data ingestion in results
+- `-TenantId`: Specify a specific tenant ID for multi-tenant scenarios
 
 ### Parameters
 
 - **IncludeZero**: Include workspaces with zero data ingestion in results
 - **SubscriptionsFile**: Path to JSON file containing specific subscription IDs to analyze
 - **Region**: Filter workspaces by specific Azure region
+- **TenantId**: Specify a specific tenant ID for multi-tenant analysis
 
 ### Subscription Filter File Format
 
@@ -55,12 +59,23 @@ Replace the `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` with your actual subscription
 
 ### Output
 
-The script displays a table showing:
+The script displays a detailed table showing:
 - Workspace name and resource group
 - Location (region)
 - Subscription name
-- Data ingested in GB over the last 30 days
-- Total ingestion across all analyzed workspaces
+- **Analytics logs ingestion** (GB over last 30 days)
+- **Basic logs ingestion** (GB over last 30 days)
+- **Auxiliary logs ingestion** (GB over last 30 days)
+- **Total ingestion** per workspace
+- **Commitment tier recommendations** based on total ingestion volumes
+- **Cost analysis** showing estimated pay-as-you-go costs vs. commitment tier savings
+
+**Understanding Log Classifications:**
+- **Analytics**: Standard logs with full query capabilities and retention (used for commitment tier calculations)
+- **Basic**: Lower-cost logs with limited query capabilities, 8-day retention
+- **Auxiliary**: Archive logs for compliance, lowest cost, minimal query access
+
+The script provides both per-workspace breakdowns and aggregate totals across all analyzed workspaces, helping you understand which log types contribute most to your costs and commitment tier eligibility.
 
 ![Script Output Example](screenshots/workspace-ingestion-output.png)
 
@@ -77,6 +92,8 @@ This script is particularly valuable for:
 - **Commitment tier planning**: Understanding actual data volumes before setting up dedicated clusters  
 - **Regional analysis**: Identifying which regions have sufficient data volume to justify dedicated clusters
 - **Cost optimization**: Determining if your workspaces meet the minimum requirements for commitment tier discounts
+- **Log classification insights**: Understanding the breakdown between Analytics, Basic, and Auxiliary logs to optimize your table plan strategy (see [Part 2: Log Classifications](../02_Log_Classifications/README.md))
+- **Multi-tier optimization**: Combining log classification changes (Part 2) with commitment tier pricing (Part 3) for maximum cost savings
 
 ## PowerShell Script: Create-ClusterAndLinkWorkspaces.ps1
 
