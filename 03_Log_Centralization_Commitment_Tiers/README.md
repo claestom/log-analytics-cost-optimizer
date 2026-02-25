@@ -6,7 +6,9 @@
 
 > **Important**: Dedicated clusters require a minimum commitment of 100GB/day. Only proceed with cluster creation if your regional ingestion meets this threshold.
 
-> **Log Classifications**: The script automatically categorizes ingestion by table plan type (Analytics, Basic, Auxiliary) as defined in [Part 2: Log Classifications](../02_Log_Classifications/README.md). This breakdown helps you understand which log types contribute to your commitment tier calculations.
+> **Critical**: Dedicated clusters **only count Analytics logs** toward commitment tier calculations. Basic and Auxiliary logs are billed separately and do not contribute to the commitment tier threshold. This is why the script splits ingestion by log classification - you need at least 100GB/day of **Analytics logs specifically** to qualify for commitment tier pricing.
+
+> **Log Classifications**: The script automatically categorizes ingestion by table plan type (Analytics, Basic, Auxiliary) as defined in [Part 2: Log Classifications](../02_Log_Classifications/README.md). Understanding this breakdown is essential for commitment tier planning since only Analytics logs count toward your 100GB/day minimum.
 
 ### Prerequisites
 
@@ -71,11 +73,13 @@ The script displays a detailed table showing:
 - **Cost analysis** showing estimated pay-as-you-go costs vs. commitment tier savings
 
 **Understanding Log Classifications:**
-- **Analytics**: Standard logs with full query capabilities and retention (used for commitment tier calculations)
-- **Basic**: Lower-cost logs with limited query capabilities, 8-day retention
-- **Auxiliary**: Archive logs for compliance, lowest cost, minimal query access
+- **Analytics**: Standard logs with full query capabilities and retention (**ONLY these count toward commitment tier calculations**)
+- **Basic**: Lower-cost logs with limited query capabilities, 8-day retention (billed separately, not included in commitment tier)
+- **Auxiliary**: Archive logs for compliance, lowest cost, minimal query access (billed separately, not included in commitment tier)
 
-The script provides both per-workspace breakdowns and aggregate totals across all analyzed workspaces, helping you understand which log types contribute most to your costs and commitment tier eligibility.
+**Why This Matters**: Since dedicated clusters only apply commitment tier pricing to Analytics logs, you must have at least 100GB/day of Analytics logs (not total logs) to meet the minimum threshold. Basic and Auxiliary logs continue to be billed at their respective per-GB rates regardless of your commitment tier.
+
+The script provides both per-workspace breakdowns and aggregate totals across all analyzed workspaces, helping you understand which log types contribute to your commitment tier eligibility and where optimization opportunities exist.
 
 ![Script Output Example](screenshots/workspace-ingestion-output.png)
 
@@ -88,12 +92,12 @@ These warnings don't affect the script's functionality and can be safely ignored
 ### Use Case
 
 This script is particularly valuable for:
-- **Pre-deployment validation**: Confirming you have at least 100GB/day ingestion before creating dedicated clusters
-- **Commitment tier planning**: Understanding actual data volumes before setting up dedicated clusters  
-- **Regional analysis**: Identifying which regions have sufficient data volume to justify dedicated clusters
+- **Pre-deployment validation**: Confirming you have at least 100GB/day of **Analytics logs** before creating dedicated clusters (not total ingestion)
+- **Commitment tier planning**: Understanding actual Analytics log volumes before setting up dedicated clusters  
+- **Regional analysis**: Identifying which regions have sufficient Analytics log volume to justify dedicated clusters
 - **Cost optimization**: Determining if your workspaces meet the minimum requirements for commitment tier discounts
 - **Log classification insights**: Understanding the breakdown between Analytics, Basic, and Auxiliary logs to optimize your table plan strategy (see [Part 2: Log Classifications](../02_Log_Classifications/README.md))
-- **Multi-tier optimization**: Combining log classification changes (Part 2) with commitment tier pricing (Part 3) for maximum cost savings
+- **Multi-tier optimization**: Combining log classification changes (Part 2) with commitment tier pricing (Part 3) for maximum cost savings - convert appropriate tables to Basic/Auxiliary to reduce Analytics volume while maintaining functionality
 
 ## PowerShell Script: Create-ClusterAndLinkWorkspaces.ps1
 
