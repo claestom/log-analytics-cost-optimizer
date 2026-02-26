@@ -228,7 +228,6 @@ if ($avgAnalyticsPerDay -ge 100) {
     }
     
     Write-Host "Recommended Commitment Tier: $($recommendedTier.Capacity) GB/day" -ForegroundColor Cyan
-    Write-Host "  Monthly Cost: `$$($recommendedTier.MonthlyCost)" -ForegroundColor White
 } else {
     Write-Host "RECOMMENDATION: Use Pay-As-You-Go (PAYG) pricing" -ForegroundColor Yellow
     Write-Host ""
